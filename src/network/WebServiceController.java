@@ -37,7 +37,7 @@ public class WebServiceController implements WebServiceInterface {
     @Override
     public void result(String ip, int port, String[] files, int hops) {
         Message msg = new SEROKMessage(ip,port,files, hops);
-//        System.out.println("SEROK:: "+msg);
+        System.out.println("SEROK message received: "+msg);
         myNode.onMessageReceived(msg);
     }
 }

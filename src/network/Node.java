@@ -27,7 +27,8 @@ public class Node {
 //        String[] config = {"127.0.0.2", "5096", "p6", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5097", "p7", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5098", "p8", "127.0.0.1", "5000"};
-//        String[] config={"127.0.0.2","5088","t8","127.0.0.1","5000"};
+//        String[] config = {"127.0.0.2", "5099", "p9", "127.0.0.1", "5000"};
+//        String[] config = {"127.0.0.2", "5100", "p10", "127.0.0.1", "5000"};
         boolean configurationSuccessFull = Configuration.setConfiguration(config);
         if (!configurationSuccessFull) {
             System.out.println("ERROR IN ARGUMENTS...");
@@ -127,6 +128,9 @@ public class Node {
                 "King"};
 
         for (int i = 0; i < queries.length; i++) {
+            System.out.println();
+            System.out.println();
+            System.out.println(queries[i]);
             this.searchFile(queries[i]);
         }
     }
@@ -318,6 +322,7 @@ public class Node {
         ArrayList<String> files = this.searchQueryInLocal(message.query);
         if (files.size() > 0) {
             System.out.println("Locally found files:");
+            System.out.println("Answered query : "+message);
             Iterator<String> fileIterator = files.iterator();
             while (fileIterator.hasNext()) {
                 String temp = fileIterator.next();
@@ -328,6 +333,8 @@ public class Node {
 
         } else {
             System.out.println("Searching file globally.");
+            System.out.println("Forwarded query : "+message);
+
             forwardSerMsg(message);
         }
 

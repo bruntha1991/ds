@@ -32,7 +32,7 @@ public class MessageTransfer {
     }
 
     public void sendMessage(Message message){
-        System.out.println(message);
+//        System.out.println(message);
             if(message.msgType == MessageType.REG || message.msgType == MessageType.UNREG){
 
                 //System.out.print(message.ip_to +" "+message.port_to);
