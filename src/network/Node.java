@@ -69,6 +69,7 @@ public class Node {
         System.out.println("RCV: "+noOfRcvMsg);
         System.out.println("FWD: "+noOfFwdMsg);
         System.out.println("ANS: "+noOfAnsMsg);
+        System.out.println("Table Size: "+Configuration.getNeighbors().size());
     }
 
     public void run() {
