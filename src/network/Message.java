@@ -167,6 +167,7 @@ class SERMessage extends Message{
         this.ip_from = ipfrom;
         this.port_from = port;
     }
+
     public String toString(){
         String temp="SER " + ip_from + " " + port_from +" "+query+" "+ hops;
         return getMsgLength(temp)+" "+temp;
