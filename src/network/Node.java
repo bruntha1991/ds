@@ -19,16 +19,16 @@ public class Node {
 
 
     public Node(String args[]) {
-//        String[] config = {"127.0.0.2", "5091", "p1", "127.0.0.1", "5000"};
-//        String[] config = {"127.0.0.2", "5092", "p2", "127.0.0.1", "5000"};
-//        String[] config = {"127.0.0.2", "5093", "p3", "127.0.0.1", "5000"};
+//        String[] config = {"10.42.0.34", "5091", "pk1", "10.42.0.1", "5000"};
+//        String[] config = {"10.42.0.34", "5092", "pk2", "10.42.0.1", "5000"};
+        String[] config = {"10.42.0.34", "5095", "pk3", "10.42.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5094", "p4", "127.0.0.1", "5000"};
-        String[] config = {"127.0.0.2", "5095", "p5", "127.0.0.1", "5000"};
+//        String[] config = {"127.0.0.2", "5095", "p5", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5096", "p6", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5097", "p7", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5098", "p8", "127.0.0.1", "5000"};
-//        String[] config = {"127.0.0.2", "5099", "p9", "127.0.0.1", "5000"};
-//        String[] config = {"127.0.0.2", "5100", "p10", "127.0.0.1", "5000"};
+//        String[] config = {"10.42.0.34", "5099", "p9", "127.0.0.1", "5000"};
+//        String[] config = {"10.42.0.34", "5100", "p10", "127.0.0.1", "5000"};
         boolean configurationSuccessFull = Configuration.setConfiguration(config);
         if (!configurationSuccessFull) {
             System.out.println("ERROR IN ARGUMENTS...");
