@@ -23,12 +23,15 @@ public class Node {
 
 
     public Node(String args[]) {
-//        String[] config = {"10.42.0.34", "5091", "pk1", "10.42.0.1", "5000"};
-//        String[] config = {"10.42.0.34", "5092", "pk2", "10.42.0.1", "5000"};
-        String[] config = {"10.42.0.34", "5095", "pk3", "10.42.0.1", "5000"};
+//        String[] config = {"192.168.1.3", "5091", "pk1", "192.168.1.4", "5000"};
+        String[] config = {"192.168.1.3", "5092", "pk2", "192.168.1.4", "5000"};
+//        String[] config = {"192.168.1.3", "5095", "pk3", "192.168.1.4", "5000"};
+
+
+
 //        String[] config = {"127.0.0.2", "5094", "p4", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5095", "p5", "127.0.0.1", "5000"};
-//        String[] config = {"127.0.0.2", "5096", "p6", "127.0.0.1", "5000"};
+//        String[] config = {"127.0.0.2", "5096", "p6", "127.0.0.1", "5000"};ifcong
 //        String[] config = {"127.0.0.2", "5097", "p7", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5098", "p8", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5099", "p9", "127.0.0.1", "5000"};
@@ -64,7 +67,7 @@ public class Node {
 
     public void printMessageDetail(){
         System.out.println("RCV: "+noOfRcvMsg);
-        System.out.println("FWD: "+noOfFwdMsg);
+        System.out.println("FWD: " + noOfFwdMsg);
         System.out.println("ANS: "+noOfAnsMsg);
     }
 
@@ -239,7 +242,7 @@ public class Node {
         System.out.println("Table size: " + neighbors.size());
         System.out.println("Hops: " + message.hops);
         System.out.println("Time elapsed: " + (endTime - startTime));
-        table.add(message.hops+" "+(endTime - startTime));
+        table.add(message.hops + " " + (endTime - startTime));
         //Configuration.setNeighbor(message.ip_from, message.port_from);
     }
 
@@ -331,7 +334,7 @@ public class Node {
             if (files.length > 0) {
                 Message serokMsg = new SEROKMessage(files, message.hops, message.ip_from, message.port_from);
                 myMsgTransfer.sendMessage(serokMsg);
-                System.out.println("Answered query : "+message);
+                System.out.println("Answered query : " + message);
             } else {
                 System.out.println("Searching file globally.");
                 forwardSerMsg(message);
