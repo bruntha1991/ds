@@ -19,7 +19,7 @@ public class Node {
     int noOfFwdMsg=0;
     int noOfAnsMsg=0;
     int noOfRcvMsg=0;
-    int qID=1;
+    int qID=0;
     ArrayList<String> table=new ArrayList<String>();
 
 
@@ -28,15 +28,16 @@ public class Node {
 //        String[] config = {"127.0.0.2", "5092", "p2", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5093", "p3", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5094", "p4", "127.0.0.1", "5000"};
-        String[] config = {"127.0.0.2", "5095", "p5", "127.0.0.1", "5000"};
+//        String[] config = {"127.0.0.2", "5095", "p5", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5096", "p6", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5097", "p7", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5098", "p8", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5099", "p9", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5100", "p10", "127.0.0.1", "5000"};
 
-//        String[] config = {"10.42.0.1", "5100", "bruntha1", "127.0.0.1", "5000"};
-//        String[] config = {"10.42.0.1", "5101", "bruntha2", "127.0.0.1", "5000"};
+//        String[] config = {"192.168.1.4", "5100", "bruntha1", "127.0.0.1", "5000"};
+//        String[] config = {"192.168.1.4", "5101", "bruntha2", "127.0.0.1", "5000"};
+        String[] config = {"192.168.1.4", "5104", "bruntha4", "127.0.0.1", "5000"};
 //        String[] config = {"10.42.0.1", "5102", "bruntha3", "127.0.0.1", "5000"};
 //        String[] config = {"10.42.0.1", "5103", "bruntha4", "127.0.0.1", "5000"};
 
@@ -156,7 +157,7 @@ public class Node {
                 "Hacking",
                 "King"};
 
-        qID=1;
+        qID=0;
         for (int i = 0; i < queries.length; i++) {
             qID++;
             System.out.println();
@@ -366,7 +367,7 @@ public class Node {
             }
             endTime = System.currentTimeMillis();
             System.out.println("Time elapsed: " + (endTime - startTime));
-            table.add(message.hops + " " + (endTime - startTime));
+            table.add(qID+" "+message.hops + " " + (endTime - startTime));
 
         } else {
             System.out.println("Searching file globally.");
