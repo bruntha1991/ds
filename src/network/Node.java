@@ -16,6 +16,10 @@ public class Node {
     public Message lastMessage = new SERMessage("", 0, "", 0);
     long startTime;
     long endTime;
+    int noOfFwdMsg=0;
+    int noOfAnsMsg=0;
+    int noOfRcvMsg=0;
+    ArrayList<String> table=new ArrayList<String>();
 
 
     public Node(String args[]) {
@@ -27,8 +31,13 @@ public class Node {
 //        String[] config = {"127.0.0.2", "5096", "p6", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5097", "p7", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5098", "p8", "127.0.0.1", "5000"};
-//        String[] config = {"10.42.0.34", "5099", "p9", "127.0.0.1", "5000"};
-//        String[] config = {"10.42.0.34", "5100", "p10", "127.0.0.1", "5000"};
+//        String[] config = {"127.0.0.2", "5099", "p9", "127.0.0.1", "5000"};
+//        String[] config = {"127.0.0.2", "5100", "p10", "127.0.0.1", "5000"};
+//        String[] config = {"10.42.0.1", "5100", "bruntha1", "127.0.0.1", "5000"};
+//        String[] config = {"10.42.0.1", "5101", "bruntha2", "127.0.0.1", "5000"};
+//        String[] config = {"10.42.0.1", "5102", "bruntha3", "127.0.0.1", "5000"};
+//        String[] config = {"10.42.0.1", "5103", "bruntha4", "127.0.0.1", "5000"};
+
         boolean configurationSuccessFull = Configuration.setConfiguration(config);
         if (!configurationSuccessFull) {
             System.out.println("ERROR IN ARGUMENTS...");
@@ -45,6 +54,18 @@ public class Node {
         myNetwork.run();
 
 
+    }
+
+    public void printTable(){
+        for (int i = 0; i < table.size(); i++) {
+            System.out.println(table.get(i));
+        }
+    }
+
+    public void printMessageDetail(){
+        System.out.println("RCV: "+noOfRcvMsg);
+        System.out.println("FWD: "+noOfFwdMsg);
+        System.out.println("ANS: "+noOfAnsMsg);
     }
 
     public void run() {
@@ -65,6 +86,10 @@ public class Node {
                     this.printConnectedNeighbors();
                 }else if (cmd.equals("search all")) {
                     this.searchAll();
+                }else if (cmd.equals("print table")) {
+                    this.printTable();
+                }else if (cmd.equals("print msgsum")) {
+                    this.printMessageDetail();
                 } else if (cmd.length() > 7 && cmd.substring(0, 6).equals("search")) this.searchFile(cmd.substring(7));
                 else System.out.println(">>Unknown command");
             } catch (IOException e) {
@@ -214,6 +239,7 @@ public class Node {
         System.out.println("Table size: " + neighbors.size());
         System.out.println("Hops: " + message.hops);
         System.out.println("Time elapsed: " + (endTime - startTime));
+        table.add(message.hops+" "+(endTime - startTime));
         //Configuration.setNeighbor(message.ip_from, message.port_from);
     }
 
@@ -295,7 +321,8 @@ public class Node {
 
     public void sendSEROKMsg(Message message) {
 
-
+        System.out.println("Received query : "+message);
+        noOfRcvMsg++;
         if (!lastMessage.isequal(message)) {
             lastMessage = message;
             System.out.println("Searching file locally.");
@@ -304,6 +331,7 @@ public class Node {
             if (files.length > 0) {
                 Message serokMsg = new SEROKMessage(files, message.hops, message.ip_from, message.port_from);
                 myMsgTransfer.sendMessage(serokMsg);
+                System.out.println("Answered query : "+message);
             } else {
                 System.out.println("Searching file globally.");
                 forwardSerMsg(message);
@@ -322,6 +350,7 @@ public class Node {
         ArrayList<String> files = this.searchQueryInLocal(message.query);
         if (files.size() > 0) {
             System.out.println("Locally found files:");
+            noOfAnsMsg++;
             System.out.println("Answered query : "+message);
             Iterator<String> fileIterator = files.iterator();
             while (fileIterator.hasNext()) {
@@ -330,10 +359,10 @@ public class Node {
             }
             endTime = System.currentTimeMillis();
             System.out.println("Time elapsed: " + (endTime - startTime));
+            table.add(message.hops + " " + (endTime - startTime));
 
         } else {
             System.out.println("Searching file globally.");
-            System.out.println("Forwarded query : "+message);
 
             forwardSerMsg(message);
         }
@@ -348,6 +377,8 @@ public class Node {
         while (neighborsIterator.hasNext()) {
             Neighbor temp = neighborsIterator.next();
             Message serMsg = new SERMessage(message.query, message.hops + 1, message.ip_from, message.port_from, temp.getIpAddress(), temp.getPortNumber());
+            noOfFwdMsg++;
+            System.out.println("Forwarded query : "+message.ip_from+":"+message.port_from+" TO "+temp.getIpAddress()+":"+temp.getPortNumber());
             myMsgTransfer.sendMessage(serMsg);
         }
 
