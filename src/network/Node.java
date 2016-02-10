@@ -19,6 +19,7 @@ public class Node {
     int noOfFwdMsg=0;
     int noOfAnsMsg=0;
     int noOfRcvMsg=0;
+    int qID=1;
     ArrayList<String> table=new ArrayList<String>();
 
 
@@ -154,7 +155,9 @@ public class Node {
                 "Hacking",
                 "King"};
 
+        qID=1;
         for (int i = 0; i < queries.length; i++) {
+            qID++;
             System.out.println();
             System.out.println();
             System.out.println(queries[i]);
@@ -241,7 +244,7 @@ public class Node {
         System.out.println("Table size: " + neighbors.size());
         System.out.println("Hops: " + message.hops);
         System.out.println("Time elapsed: " + (endTime - startTime));
-        table.add(message.hops+" "+(endTime - startTime));
+        table.add(qID+" "+message.hops+" "+(endTime - startTime));
         //Configuration.setNeighbor(message.ip_from, message.port_from);
     }
 
@@ -333,6 +336,7 @@ public class Node {
             if (files.length > 0) {
                 Message serokMsg = new SEROKMessage(files, message.hops, message.ip_from, message.port_from);
                 myMsgTransfer.sendMessage(serokMsg);
+                noOfAnsMsg++;
                 System.out.println("Answered query : "+message);
             } else {
                 System.out.println("Searching file globally.");
