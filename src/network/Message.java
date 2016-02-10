@@ -29,8 +29,6 @@ public class Message {
     }
 }
 
-
-
 class REGMessage extends Message {
 
     public REGMessage() {

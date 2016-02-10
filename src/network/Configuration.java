@@ -83,16 +83,6 @@ public class Configuration {
 
             }
         }
-
-
-//        Iterator<Neighbor> neighborsIterator = neighbors.iterator();
-//        while (neighborsIterator.hasNext()) {
-//            Neighbor temp = neighborsIterator.next();
-//            if(temp.toString().equals(ip+":"+port)){
-//                neighborsIterator.remove();
-//            }
-//        }
-
     }
     public static ArrayList<String> getMyFiles() {
         synchronized (myFiles) {
