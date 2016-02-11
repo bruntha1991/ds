@@ -23,27 +23,10 @@ public class Node {
     ArrayList<String> table=new ArrayList<String>();
 
 
-    public Node(String args[]) {
+    public Node() {
         String[] config = {"192.168.1.3", "5091", "pk1", "192.168.1.4", "5000"};
-//        String[] config = {"192.168.1.3", "5092", "pk2", "192.168.1.4", "5000"};
-//        String[] config = {"192.168.1.3", "5095", "pk3", "192.168.1.4", "5000"};
-
-
-
-//        String[] config = {"127.0.0.2", "5094", "p4", "127.0.0.1", "5000"};
-//        String[] config = {"127.0.0.2", "5095", "p5", "127.0.0.1", "5000"};
-//        String[] config = {"127.0.0.2", "5096", "p6", "127.0.0.1", "5000"};ifcong
-
-//        String[] config = {"127.0.0.2", "5097", "p7", "127.0.0.1", "5000"};
-//        String[] config = {"127.0.0.2", "5098", "p8", "127.0.0.1", "5000"};
-//        String[] config = {"127.0.0.2", "5099", "p9", "127.0.0.1", "5000"};
-//        String[] config = {"127.0.0.2", "5100", "p10", "127.0.0.1", "5000"};
-
-//        String[] config = {"10.42.0.1", "5100", "bruntha1", "127.0.0.1", "5000"};
-//        String[] config = {"10.42.0.1", "5101", "bruntha2", "127.0.0.1", "5000"};
-
-//        String[] config = {"10.42.0.1", "5102", "bruntha3", "127.0.0.1", "5000"};
-//        String[] config = {"10.42.0.1", "5103", "bruntha4", "127.0.0.1", "5000"};
+//      String[] config = {"192.168.1.3", "5092", "pk2", "192.168.1.4", "5000"};
+//      String[] config = {"192.168.1.3", "5095", "pk3", "192.168.1.4", "5000"};
 
         boolean configurationSuccessFull = Configuration.setConfiguration(config);
         if (!configurationSuccessFull) {
@@ -57,7 +40,7 @@ public class Node {
 
     public static void main(String args[]) {
 
-        Node myNetwork = new Node(args);
+        Node myNetwork = new Node();
         myNetwork.run();
 
 
@@ -76,6 +59,7 @@ public class Node {
         System.out.println("Table Size: "+Configuration.getNeighbors().size());
     }
 
+    //Initiating the node to start the execution with the configured properties
     public void run() {
 
         this.registerServer();
@@ -313,6 +297,7 @@ public class Node {
 
     }
 
+    //Check for the availability of files in local machine
     public ArrayList<String> searchQueryInLocal(String query) {
 
         ArrayList<String> files = Configuration.getMyFiles();
@@ -360,6 +345,7 @@ public class Node {
         startTime = System.currentTimeMillis();
         Message message = new SERMessage(filename, 0, Configuration.getMyIpAddress(), Configuration.getMyPortNumber());
         lastMessage = message;
+        //Intilly search in the local machine for the queries
         System.out.println("Searching file locally.");
         ArrayList<String> files = this.searchQueryInLocal(message.query);
         if (files.size() > 0) {
@@ -377,7 +363,7 @@ public class Node {
 
         } else {
             System.out.println("Searching file globally.");
-
+            //if the files are not available in local machine then start searching globally
             forwardSerMsg(message);
         }
 
@@ -398,11 +384,13 @@ public class Node {
 
     }
 
+    //Leave from the server
     public void unregisterServer() {
         Message unregMsg = new UNREGMessage();
         myMsgTransfer.sendMessage(unregMsg);
     }
 
+    //
     public void registerServer() {
         Message message = new REGMessage();
         myMsgTransfer.sendMessage(message);
