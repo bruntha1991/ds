@@ -26,9 +26,9 @@ public class Node {
     public Node(String args[]) {
 //        String[] config = {"127.0.0.2", "5091", "p1", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5092", "p2", "127.0.0.1", "5000"};
-//        String[] config = {"127.0.0.2", "5093", "p3", "127.0.0.1", "5000"};
+        String[] config = {"127.0.0.2", "5093", "p3", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5094", "p4", "127.0.0.1", "5000"};
-        String[] config = {"127.0.0.2", "5095", "p5", "127.0.0.1", "5000"};
+//        String[] config = {"127.0.0.2", "5095", "p5", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5096", "p6", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5097", "p7", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5098", "p8", "127.0.0.1", "5000"};
@@ -92,7 +92,7 @@ public class Node {
                     this.printConnectedNeighbors();
                 }else if (cmd.equals("search all")) {
                     this.searchAll();
-                }else if (cmd.equals("print performaceTable")) {
+                }else if (cmd.equals("print perTable")) {
                     this.printTable();
                 }else if (cmd.equals("print msgsum")) {
                     this.printMessageDetail();
@@ -206,6 +206,7 @@ public class Node {
                 break;
             case LEAVE:
                 Configuration.removeNeighbor(message.ip_to, message.port_to);
+                this.checkForZeroNeighbors();
                 break;
             case JOIN:
                 Configuration.setNeighbor(message.ip_to, message.port_to);
@@ -316,6 +317,20 @@ public class Node {
         return output;
     }
 
+    public void checkForZeroNeighbors(){
+
+
+        if(Configuration.getNeighbors().size()==0){
+            if(Configuration.getBackUpNeighbors().size()>0){
+                List<Neighbor> neighbors = Configuration.getBackUpNeighbors();
+                Configuration.setNeighbor(neighbors.get(0).getIpAddress(), neighbors.get(0).getPortNumber());
+            }else{
+                System.out.println("This node has no connections.");
+            }
+
+        }
+    }
+
     public void sendSEROKMsg(Message message) {
 
         System.out.println("Received query : "+message);
@@ -332,7 +347,9 @@ public class Node {
 
                 noOfAnsMsg++;
                 System.out.println("Answered query : "+message);
-            } else {
+            }else {
+                Message serokMsg = new SEROKMessage(files,message.hops, message.ip_from, message.port_from);
+                myMsgTransfer.sendMessage(serokMsg);
                 System.out.println("Searching file globally.");
                 forwardSerMsg(message);
             }
@@ -343,6 +360,7 @@ public class Node {
     }
 
     public void searchFile(String filename) {
+        performaceTable=new ArrayList<String>();
         startTime = System.currentTimeMillis();
         Message message = new SERMessage(filename, 0, Configuration.getMyIpAddress(), Configuration.getMyPortNumber());
         lastMessage = message;
@@ -377,12 +395,13 @@ public class Node {
         Iterator<Neighbor> neighborsIterator = neighbors.iterator();
         while (neighborsIterator.hasNext()) {
             Neighbor temp = neighborsIterator.next();
-            Message serMsg = new SERMessage(message.query, message.hops + 1, message.ip_from, message.port_from, temp.getIpAddress(), temp.getPortNumber());
-            noOfFwdMsg++;
-            System.out.println("Forwarded query : "+message.ip_from+":"+message.port_from+" TO "+temp.getIpAddress()+":"+temp.getPortNumber());
-            myMsgTransfer.sendMessage(serMsg);
+            if (!message.ip_from.matches(temp.getIpAddress()) || message.port_from != temp.getPortNumber()) {
+                Message serMsg = new SERMessage(message.query, message.hops + 1, message.ip_from, message.port_from, temp.getIpAddress(), temp.getPortNumber());
+                noOfFwdMsg++;
+                System.out.println("Forwarded query : "+message.ip_from+":"+message.port_from+" TO "+temp.getIpAddress()+":"+temp.getPortNumber());
+                myMsgTransfer.sendMessage(serMsg);
+            }
         }
-
     }
 
     //Leave from the server

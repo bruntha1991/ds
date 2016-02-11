@@ -103,6 +103,9 @@ public class Configuration {
                 neighbors.remove(temp);
 
             }
+            if(backUpNeighbors.contains(temp)) {
+                backUpNeighbors.remove(temp);
+            }
         }
     }
 
