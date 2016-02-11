@@ -20,7 +20,7 @@ public class Node {
     int noOfAnsMsg=0;
     int noOfRcvMsg=0;
     int qID=0;
-    ArrayList<String> table=new ArrayList<String>();
+    ArrayList<String> performaceTable;
 
 
     public Node(String args[]) {
@@ -28,7 +28,7 @@ public class Node {
 //        String[] config = {"127.0.0.2", "5092", "p2", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5093", "p3", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5094", "p4", "127.0.0.1", "5000"};
-//        String[] config = {"127.0.0.2", "5095", "p5", "127.0.0.1", "5000"};
+        String[] config = {"127.0.0.2", "5095", "p5", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5096", "p6", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5097", "p7", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5098", "p8", "127.0.0.1", "5000"};
@@ -37,7 +37,7 @@ public class Node {
 
 //        String[] config = {"192.168.1.4", "5100", "bruntha1", "127.0.0.1", "5000"};
 //        String[] config = {"192.168.1.4", "5101", "bruntha2", "127.0.0.1", "5000"};
-        String[] config = {"192.168.1.4", "5104", "bruntha4", "127.0.0.1", "5000"};
+//        String[] config = {"192.168.1.4", "5104", "bruntha4", "127.0.0.1", "5000"};
 //        String[] config = {"10.42.0.1", "5102", "bruntha3", "127.0.0.1", "5000"};
 //        String[] config = {"10.42.0.1", "5103", "bruntha4", "127.0.0.1", "5000"};
 
@@ -61,8 +61,8 @@ public class Node {
     }
 
     public void printTable(){
-        for (int i = 0; i < table.size(); i++) {
-            System.out.println(table.get(i));
+        for (int i = 0; i < performaceTable.size(); i++) {
+            System.out.println(performaceTable.get(i));
         }
     }
 
@@ -91,7 +91,7 @@ public class Node {
                     this.printConnectedNeighbors();
                 }else if (cmd.equals("search all")) {
                     this.searchAll();
-                }else if (cmd.equals("print table")) {
+                }else if (cmd.equals("print performaceTable")) {
                     this.printTable();
                 }else if (cmd.equals("print msgsum")) {
                     this.printMessageDetail();
@@ -106,6 +106,7 @@ public class Node {
     }
 
     public void searchAll() {
+        performaceTable =new ArrayList<String>();
         String[] queries = {"Twilight",
                 "Jack",
                 "American Idol",
@@ -225,7 +226,7 @@ public class Node {
 
         if (message.noFiles > 0) {
             System.out.println("IP: " + message.ip_from + " PORT: " + message.port_from + " replied with files:");
-
+            Configuration.setBackUpNeighbor(message.ip_from, message.port_from);
             for (int x = 0; x < message.noFiles; x++) {
                 System.out.println(message.files[x]);
                 Configuration.addFile(message.files[x]);
@@ -246,7 +247,7 @@ public class Node {
         System.out.println("Table size: " + neighbors.size());
         System.out.println("Hops: " + message.hops);
         System.out.println("Time elapsed: " + (endTime - startTime));
-        table.add(qID+" "+message.hops+" "+(endTime - startTime));
+        performaceTable.add(qID + " " + message.hops + " " + (endTime - startTime));
         //Configuration.setNeighbor(message.ip_from, message.port_from);
     }
 
@@ -294,6 +295,9 @@ public class Node {
                     break;
                 }
             }
+            for(int x=0; x<neigh_count;x++){
+                Configuration.setBackUpNeighbor(msg_data[3 * x + 3], Integer.parseInt(msg_data[3 * x + 4]));
+            }
 
         }
 
@@ -334,6 +338,7 @@ public class Node {
             lastMessage = message;
             System.out.println("Searching file locally.");
             ArrayList<String> filesArray = this.searchQueryInLocal(message.query);
+            Configuration.setBackUpNeighbor(message.ip_from, message.port_from);
             String[] files = filesArray.toArray(new String[filesArray.size()]);
             if (files.length > 0) {
                 Message serokMsg = new SEROKMessage(files, message.hops, message.ip_from, message.port_from);
@@ -367,7 +372,7 @@ public class Node {
             }
             endTime = System.currentTimeMillis();
             System.out.println("Time elapsed: " + (endTime - startTime));
-            table.add(qID+" "+message.hops + " " + (endTime - startTime));
+            performaceTable.add(qID + " " + message.hops + " " + (endTime - startTime));
 
         } else {
             System.out.println("Searching file globally.");

@@ -16,11 +16,12 @@ public class Configuration {
     private static List<Neighbor> neighbors = new ArrayList<Neighbor>();
     private final static Object lock1 = new Object();
     private final static Object lock2 = new Object();
+    private static List<Neighbor> backUpNeighbors = new ArrayList<Neighbor>();
 
-    public static boolean setConfiguration(String[] configurationDetails){
-        try{
+    public static boolean setConfiguration(String[] configurationDetails) {
+        try {
 
-            if(configurationDetails.length != 5)
+            if (configurationDetails.length != 5)
                 return false;
 
             //update configurations details
@@ -32,8 +33,7 @@ public class Configuration {
 
             //updateFiles
             myFiles = Files.getRandomFiles();
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
 
@@ -60,7 +60,7 @@ public class Configuration {
         return serverPortNumber;
     }
 
-    public static void setNeighbor(String ip, int port){
+    public static void setNeighbor(String ip, int port) {
         synchronized (neighbors) {
             Neighbor temp = new Neighbor(ip, port);
             if (!neighbors.contains(temp)) {
@@ -70,42 +70,72 @@ public class Configuration {
         }
 
     }
-    public static List<Neighbor> getNeighbors(){
+
+    public static List<Neighbor> getNeighbors() {
         synchronized (neighbors) {
             return neighbors;
         }
     }
-    public static void removeNeighbor(String ip, int port){
-        synchronized (neighbors) {
-            Neighbor temp = new Neighbor(ip, port);
-            if (neighbors.contains(temp)) {
-                neighbors.remove(temp);
 
-            }
-        }
-
-
-//        Iterator<Neighbor> neighborsIterator = neighbors.iterator();
-//        while (neighborsIterator.hasNext()) {
-//            Neighbor temp = neighborsIterator.next();
-//            if(temp.toString().equals(ip+":"+port)){
-//                neighborsIterator.remove();
+    public static void removeNeighbor(String ip, int port) {
+//        synchronized (neighbors) {
+//            Iterator<Neighbor> neighborsIterator = neighbors.iterator();
+//            while (neighborsIterator.hasNext()) {
+//                Neighbor temp = neighborsIterator.next();
+//                if (temp.toString().equals(ip + ":" + port)) {
+//                    neighborsIterator.remove();
+//                }
 //            }
 //        }
 
+        Neighbor temp = new Neighbor(ip, port);
+        if(neighbors.contains(temp)){
+            neighbors.remove(temp);
+
+        }
+        if(backUpNeighbors.contains(temp)){
+            backUpNeighbors.remove(temp);
+
+        }
     }
+
     public static ArrayList<String> getMyFiles() {
         synchronized (myFiles) {
             return myFiles;
         }
     }
 
-    public static void addFile(String file){
+    public static void addFile(String file) {
         synchronized (myFiles) {
             if (!myFiles.contains(file)) {
                 myFiles.add(file);
             }
         }
+    }
+
+    public static void setBackUpNeighbor(String ip, int port){
+        Neighbor temp = new Neighbor(ip, port);
+        if(!backUpNeighbors.contains(temp)){
+
+            backUpNeighbors.add(temp);
+
+        }
+
+    }
+    public static List<Neighbor> getBackUpNeighbors(){
+
+        return backUpNeighbors;
+    }
+    public static void removeBackUpNeighbor(String ip, int port){
+
+
+        Neighbor temp = new Neighbor(ip, port);
+        if(backUpNeighbors.contains(temp)){
+            backUpNeighbors.remove(temp);
+
+        }
+
+
     }
 
 }
