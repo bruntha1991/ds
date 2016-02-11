@@ -24,9 +24,16 @@ public class Node {
 
 
     public Node() {
-        String[] config = {"192.168.1.3", "5091", "pk1", "192.168.1.4", "5000"};
+//        String[] config = {"192.168.1.3", "5091", "pk1", "192.168.1.4", "5000"};
 //      String[] config = {"192.168.1.3", "5092", "pk2", "192.168.1.4", "5000"};
 //      String[] config = {"192.168.1.3", "5095", "pk3", "192.168.1.4", "5000"};
+
+//        String[] config = {"127.0.0.1", "5091", "pk1", "127.0.0.1", "5000"};
+//        String[] config = {"127.0.0.1", "5092", "pk2", "127.0.0.1", "5000"};
+//        String[] config = {"127.0.0.1", "5093", "pk3", "127.0.0.1", "5000"};
+//        String[] config = {"127.0.0.1", "5094", "pk4", "127.0.0.1", "5000"};
+                String[] config = {"127.0.0.1", "5095", "pk5", "127.0.0.1", "5000"};
+
 
         boolean configurationSuccessFull = Configuration.setConfiguration(config);
         if (!configurationSuccessFull) {
@@ -88,7 +95,6 @@ public class Node {
                 e.printStackTrace();
             }
         }
-
 
     }
 
@@ -174,20 +180,15 @@ public class Node {
     public void onMessageReceived(Message message) {
 
         Message newMessage;
-        //System.out.println("message received");
         switch (message.msgType) {
             case REGOK:
-                //System.out.println(message.toString());
                 setNeighbours(message);
                 break;
             case UNROK:
-                //System.out.println(message.toString());
                 break;
             case LEAVEOK:
-                //System.out.println(message.toString());
                 break;
             case JOINOK:
-                //System.out.println(message.toString());
                 break;
             case SER:
                 sendSEROKMsg(message);
@@ -196,13 +197,10 @@ public class Node {
                 showContainedFiles(message);
                 break;
             case LEAVE:
-                //System.out.println(message.toString());
                 Configuration.removeNeighbor(message.ip_to, message.port_to);
                 break;
             case JOIN:
                 Configuration.setNeighbor(message.ip_to, message.port_to);
-                //newMessage = new JOINOKMessage(message.ip_to, message.port_to);
-                //myMsgTransfer.sendMessage(newMessage);
                 break;
 
         }
@@ -217,13 +215,6 @@ public class Node {
                 System.out.println(message.files[x]);
                 Configuration.addFile(message.files[x]);
             }
-
-
-//            Iterator<String> fileIterator = message.files.iterator();
-//            while (fileIterator.hasNext()) {
-//                String temp = fileIterator.next();
-//                System.out.println(temp);
-//            }
         } else {
             System.out.println("IP: " + message.ip_from + " PORT: " + message.port_from + " replied with no files.");
         }
