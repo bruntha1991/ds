@@ -77,25 +77,32 @@ public class Configuration {
         }
     }
 
-    public static void removeNeighbor(String ip, int port) {
-//        synchronized (neighbors) {
-//            Iterator<Neighbor> neighborsIterator = neighbors.iterator();
-//            while (neighborsIterator.hasNext()) {
-//                Neighbor temp = neighborsIterator.next();
-//                if (temp.toString().equals(ip + ":" + port)) {
-//                    neighborsIterator.remove();
-//                }
-//            }
+//    public static void removeNeighbor(String ip, int port) {
+////        synchronized (neighbors) {
+////            Iterator<Neighbor> neighborsIterator = neighbors.iterator();
+////            while (neighborsIterator.hasNext()) {
+////                Neighbor temp = neighborsIterator.next();
+////                if (temp.toString().equals(ip + ":" + port)) {
+////                    neighborsIterator.remove();
+////                }
+////            }
+////        }
+//
+//        Neighbor temp = new Neighbor(ip, port);
+//        if(neighbors.contains(temp)){
+//            neighbors.remove(temp);
+//
 //        }
+//        if(backUpNeighbors.contains(temp)){
+//            backUpNeighbors.remove(temp);
 
-        Neighbor temp = new Neighbor(ip, port);
-        if(neighbors.contains(temp)){
-            neighbors.remove(temp);
+    public static void removeNeighbor(String ip, int port){
+        synchronized (neighbors) {
+            Neighbor temp = new Neighbor(ip, port);
+            if (neighbors.contains(temp)) {
+                neighbors.remove(temp);
 
-        }
-        if(backUpNeighbors.contains(temp)){
-            backUpNeighbors.remove(temp);
-
+            }
         }
     }
 

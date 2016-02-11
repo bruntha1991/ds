@@ -68,11 +68,12 @@ public class Node {
 
     public void printMessageDetail(){
         System.out.println("RCV: "+noOfRcvMsg);
-        System.out.println("FWD: "+noOfFwdMsg);
+        System.out.println("FWD: " + noOfFwdMsg);
         System.out.println("ANS: "+noOfAnsMsg);
         System.out.println("Table Size: "+Configuration.getNeighbors().size());
     }
 
+    //Initiating the node to start the execution with the configured properties
     public void run() {
 
         this.registerServer();
@@ -101,7 +102,6 @@ public class Node {
                 e.printStackTrace();
             }
         }
-
 
     }
 
@@ -188,20 +188,15 @@ public class Node {
     public void onMessageReceived(Message message) {
 
         Message newMessage;
-        //System.out.println("message received");
         switch (message.msgType) {
             case REGOK:
-                //System.out.println(message.toString());
                 setNeighbours(message);
                 break;
             case UNROK:
-                //System.out.println(message.toString());
                 break;
             case LEAVEOK:
-                //System.out.println(message.toString());
                 break;
             case JOINOK:
-                //System.out.println(message.toString());
                 break;
             case SER:
                 sendSEROKMsg(message);
@@ -210,13 +205,10 @@ public class Node {
                 showContainedFiles(message);
                 break;
             case LEAVE:
-                //System.out.println(message.toString());
                 Configuration.removeNeighbor(message.ip_to, message.port_to);
                 break;
             case JOIN:
                 Configuration.setNeighbor(message.ip_to, message.port_to);
-                //newMessage = new JOINOKMessage(message.ip_to, message.port_to);
-                //myMsgTransfer.sendMessage(newMessage);
                 break;
 
         }
@@ -231,13 +223,6 @@ public class Node {
                 System.out.println(message.files[x]);
                 Configuration.addFile(message.files[x]);
             }
-
-
-//            Iterator<String> fileIterator = message.files.iterator();
-//            while (fileIterator.hasNext()) {
-//                String temp = fileIterator.next();
-//                System.out.println(temp);
-//            }
         } else {
             System.out.println("IP: " + message.ip_from + " PORT: " + message.port_from + " replied with no files.");
         }
@@ -312,6 +297,7 @@ public class Node {
 
     }
 
+    //Check for the availability of files in local machine
     public ArrayList<String> searchQueryInLocal(String query) {
 
         ArrayList<String> files = Configuration.getMyFiles();
@@ -343,6 +329,7 @@ public class Node {
             if (files.length > 0) {
                 Message serokMsg = new SEROKMessage(files, message.hops, message.ip_from, message.port_from);
                 myMsgTransfer.sendMessage(serokMsg);
+
                 noOfAnsMsg++;
                 System.out.println("Answered query : "+message);
             } else {
@@ -359,6 +346,7 @@ public class Node {
         startTime = System.currentTimeMillis();
         Message message = new SERMessage(filename, 0, Configuration.getMyIpAddress(), Configuration.getMyPortNumber());
         lastMessage = message;
+        //Intilly search in the local machine for the queries
         System.out.println("Searching file locally.");
         ArrayList<String> files = this.searchQueryInLocal(message.query);
         if (files.size() > 0) {
@@ -376,7 +364,7 @@ public class Node {
 
         } else {
             System.out.println("Searching file globally.");
-
+            //if the files are not available in local machine then start searching globally
             forwardSerMsg(message);
         }
 
@@ -397,11 +385,13 @@ public class Node {
 
     }
 
+    //Leave from the server
     public void unregisterServer() {
         Message unregMsg = new UNREGMessage();
         myMsgTransfer.sendMessage(unregMsg);
     }
 
+    //
     public void registerServer() {
         Message message = new REGMessage();
         myMsgTransfer.sendMessage(message);
