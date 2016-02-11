@@ -37,12 +37,12 @@ public class Node {
 
 //        String[] config = {"10.42.0.1", "5100", "bruntha1", "127.0.0.1", "5000"};
 //        String[] config = {"10.42.0.1", "5101", "bruntha2", "127.0.0.1", "5000"};
-        String[] config = {"10.42.0.1", "5104", "bruntha4", "127.0.0.1", "5000"};
+//        String[] config = {"10.42.0.1", "5104", "bruntha4", "127.0.0.1", "5000"};
 //        String[] config = {"10.42.0.1", "5102", "bruntha3", "127.0.0.1", "5000"};
 //        String[] config = {"10.42.0.1", "5103", "bruntha4", "127.0.0.1", "5000"};
 
 
-        boolean configurationSuccessFull = Configuration.setConfiguration(config);
+        boolean configurationSuccessFull = Configuration.setConfiguration(args);
         if (!configurationSuccessFull) {
             System.out.println("ERROR IN ARGUMENTS...");
             System.out.println("Argument Format: BS_IP BS_PORT NODE_NAME NODE_IP NODE_PORT");
@@ -216,7 +216,7 @@ public class Node {
     }
 
     public void showContainedFiles(Message message) {
-
+        endTime = System.currentTimeMillis();
         if (message.noFiles > 0) {
             System.out.println("IP: " + message.ip_from + " PORT: " + message.port_from + " replied with files:");
             Configuration.setBackUpNeighbor(message.ip_from, message.port_from);
@@ -224,16 +224,16 @@ public class Node {
                 System.out.println(message.files[x]);
                 Configuration.addFile(message.files[x]);
             }
+            performaceTable.add(qID + " " + message.hops + " " + (endTime - startTime));
+
         } else {
             System.out.println("IP: " + message.ip_from + " PORT: " + message.port_from + " replied with no files.");
         }
-        endTime = System.currentTimeMillis();
         List<Neighbor> neighbors = Configuration.getNeighbors();
 
-        System.out.println("Table size: " + neighbors.size());
-        System.out.println("Hops: " + message.hops);
-        System.out.println("Time elapsed: " + (endTime - startTime));
-        performaceTable.add(qID + " " + message.hops + " " + (endTime - startTime));
+//        System.out.println("Table size: " + neighbors.size());
+//        System.out.println("Hops: " + message.hops);
+//        System.out.println("Time elapsed: " + (endTime - startTime));
         //Configuration.setNeighbor(message.ip_from, message.port_from);
     }
 
@@ -304,14 +304,21 @@ public class Node {
         ArrayList<String> files = Configuration.getMyFiles();
         ArrayList<String> output = new ArrayList<String>();
 
-        String lowercase = query.toLowerCase();
+        String queryLC = query.toLowerCase();
         Iterator<String> fileIterator = files.iterator();
         while (fileIterator.hasNext()) {
             String temp = fileIterator.next();
             String lowercase2 = temp.toLowerCase();
-            if (lowercase2.contains(lowercase)) {
-                output.add(temp);
+            String[] words=lowercase2.split(" ");
+            for (int i = 0; i < words.length; i++) {
+                if (queryLC.matches(words[i])) {
+                    output.add(temp);
+                    break;
+                }
             }
+//            if (lowercase2.contains(queryLC)) {
+//                output.add(temp);
+//            }
         }
 
         return output;
@@ -360,7 +367,6 @@ public class Node {
     }
 
     public void searchFile(String filename) {
-//        performaceTable=new ArrayList<String>();
         startTime = System.currentTimeMillis();
         Message message = new SERMessage(filename, 0, Configuration.getMyIpAddress(), Configuration.getMyPortNumber());
         lastMessage = message;
@@ -377,7 +383,7 @@ public class Node {
                 System.out.println(temp);
             }
             endTime = System.currentTimeMillis();
-            System.out.println("Time elapsed: " + (endTime - startTime));
+//            System.out.println("Time elapsed: " + (endTime - startTime));
             performaceTable.add(qID + " " + message.hops + " " + (endTime - startTime));
 
         } else {
@@ -437,8 +443,5 @@ public class Node {
 
             System.out.println(temp);
         }
-
     }
-
-
 }
