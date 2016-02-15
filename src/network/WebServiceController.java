@@ -7,6 +7,9 @@ import javax.jws.WebService;
 
 @WebService(endpointInterface = "network.WebServiceInterface")
 public class WebServiceController implements WebServiceInterface {
+    public WebServiceController() {
+    }
+
     Node myNode;
     public WebServiceController(Node node){
         this.myNode = node;

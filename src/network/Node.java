@@ -1,8 +1,6 @@
 package network;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,11 +14,11 @@ public class Node {
     public Message lastMessage = new SERMessage("", 0, "", 0);
     long startTime;
     long endTime;
-    int noOfFwdMsg=0;
-    int noOfAnsMsg=0;
-    int noOfRcvMsg=0;
-    int qID=0;
-    ArrayList<String> performaceTable=new ArrayList<String>();
+    int noOfFwdMsg = 0;
+    int noOfAnsMsg = 0;
+    int noOfRcvMsg = 0;
+    int qID = 0;
+    ArrayList<String> performaceTable = new ArrayList<String>();
 
 
     public Node(String args[]) {
@@ -33,7 +31,7 @@ public class Node {
 //        String[] config = {"127.0.0.2", "5097", "p7", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5098", "p8", "127.0.0.1", "5000"};
 //        String[] config = {"127.0.0.2", "5099", "p9", "127.0.0.1", "5000"};
-//        String[] config = {"127.0.0.2", "5100", "p10", "127.0.0.1", "5000"};
+        String[] config = {"127.0.0.2", "5100", "p10", "127.0.0.1", "5000"};
 
 //        String[] config = {"10.42.0.1", "5100", "bruntha1", "127.0.0.1", "5000"};
 //        String[] config = {"10.42.0.1", "5101", "bruntha2", "127.0.0.1", "5000"};
@@ -42,7 +40,7 @@ public class Node {
 //        String[] config = {"10.42.0.1", "5103", "bruntha4", "127.0.0.1", "5000"};
 
 
-        boolean configurationSuccessFull = Configuration.setConfiguration(args);
+        boolean configurationSuccessFull = Configuration.setConfiguration(config);
         if (!configurationSuccessFull) {
             System.out.println("ERROR IN ARGUMENTS...");
             System.out.println("Argument Format: BS_IP BS_PORT NODE_NAME NODE_IP NODE_PORT");
@@ -50,6 +48,19 @@ public class Node {
         }
         myMsgTransfer = new MessageTransfer(this);
 
+    }
+
+    private void writeToFile(String line, String path) {
+        PrintStream fileStream = null;
+        File file = new File(path+".txt");
+
+        try {
+            fileStream = new PrintStream(new FileOutputStream(file, true));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        fileStream.println(line);
+        fileStream.close();
     }
 
     public static void main(String args[]) {
@@ -60,17 +71,31 @@ public class Node {
 
     }
 
-    public void printTable(){
+    public void printTable(String cmd) {
+        String[] fp=cmd.split(" ");
+        writeToFile("",fp[1]);
         for (int i = 0; i < performaceTable.size(); i++) {
+            writeToFile(performaceTable.get(i),fp[1]);
             System.out.println(performaceTable.get(i));
         }
     }
 
-    public void printMessageDetail(){
-        System.out.println("RCV: "+noOfRcvMsg);
+    public void printMessageDetail(String cmd) {
+        String[] fp=cmd.split(" ");
+        writeToFile("",fp[1]);
+        writeToFile("RCV: " + noOfRcvMsg,fp[1]);
+        writeToFile("FWD: " + noOfFwdMsg,fp[1]);
+        writeToFile("ANS: " + noOfAnsMsg,fp[1]);
+        writeToFile("Table Size: " + Configuration.getNeighbors().size(),fp[1]);
+
+        System.out.println("RCV: " + noOfRcvMsg);
         System.out.println("FWD: " + noOfFwdMsg);
-        System.out.println("ANS: "+noOfAnsMsg);
-        System.out.println("Table Size: "+Configuration.getNeighbors().size());
+        System.out.println("ANS: " + noOfAnsMsg);
+        System.out.println("Table Size: " + Configuration.getNeighbors().size());
+
+        noOfAnsMsg=0;
+        noOfFwdMsg=0;
+        noOfRcvMsg=0;
     }
 
     //Initiating the node to start the execution with the configured properties
@@ -90,12 +115,12 @@ public class Node {
                     this.showLocalFiles();
                 } else if (cmd.equals("print neighbors")) {
                     this.printConnectedNeighbors();
-                }else if (cmd.equals("search all")) {
+                } else if (cmd.equals("search all")) {
                     this.searchAll();
-                }else if (cmd.equals("print perTable")) {
-                    this.printTable();
-                }else if (cmd.equals("print msgsum")) {
-                    this.printMessageDetail();
+                } else if (cmd.substring(0,5).equals("table")) {
+                    this.printTable(cmd);
+                } else if (cmd.substring(0,3).equals("msg")) {
+                    this.printMessageDetail(cmd);
                 } else if (cmd.length() > 7 && cmd.substring(0, 6).equals("search")) this.searchFile(cmd.substring(7));
                 else System.out.println(">>Unknown command");
             } catch (IOException e) {
@@ -106,7 +131,7 @@ public class Node {
     }
 
     public void searchAll() {
-        performaceTable =new ArrayList<String>();
+        performaceTable = new ArrayList<String>();
         String[] queries = {"Twilight",
                 "Jack",
                 "American Idol",
@@ -158,7 +183,7 @@ public class Node {
                 "Hacking",
                 "King"};
 
-        qID=0;
+        qID = 0;
         for (int i = 0; i < queries.length; i++) {
             qID++;
             System.out.println();
@@ -224,17 +249,12 @@ public class Node {
                 System.out.println(message.files[x]);
                 Configuration.addFile(message.files[x]);
             }
-            performaceTable.add(qID + " " + message.hops + " " + (endTime - startTime));
+//            if (performaceTable.size() == (qID - 1))
+                performaceTable.add(qID + " " + message.hops + " " + (endTime - startTime));
 
         } else {
             System.out.println("IP: " + message.ip_from + " PORT: " + message.port_from + " replied with no files.");
         }
-        List<Neighbor> neighbors = Configuration.getNeighbors();
-
-//        System.out.println("Table size: " + neighbors.size());
-//        System.out.println("Hops: " + message.hops);
-//        System.out.println("Time elapsed: " + (endTime - startTime));
-        //Configuration.setNeighbor(message.ip_from, message.port_from);
     }
 
     public void setNeighbours(Message message) {
@@ -281,7 +301,7 @@ public class Node {
                     break;
                 }
             }
-            for(int x=0; x<neigh_count;x++){
+            for (int x = 0; x < neigh_count; x++) {
                 Configuration.setBackUpNeighbor(msg_data[3 * x + 3], Integer.parseInt(msg_data[3 * x + 4]));
             }
 
@@ -309,7 +329,7 @@ public class Node {
         while (fileIterator.hasNext()) {
             String temp = fileIterator.next();
             String lowercase2 = temp.toLowerCase();
-            String[] words=lowercase2.split(" ");
+            String[] words = lowercase2.split(" ");
             for (int i = 0; i < words.length; i++) {
                 if (queryLC.matches(words[i])) {
                     output.add(temp);
@@ -324,14 +344,14 @@ public class Node {
         return output;
     }
 
-    public void checkForZeroNeighbors(){
+    public void checkForZeroNeighbors() {
 
 
-        if(Configuration.getNeighbors().size()==0){
-            if(Configuration.getBackUpNeighbors().size()>0){
+        if (Configuration.getNeighbors().size() == 0) {
+            if (Configuration.getBackUpNeighbors().size() > 0) {
                 List<Neighbor> neighbors = Configuration.getBackUpNeighbors();
                 Configuration.setNeighbor(neighbors.get(0).getIpAddress(), neighbors.get(0).getPortNumber());
-            }else{
+            } else {
                 System.out.println("This node has no connections.");
             }
 
@@ -340,7 +360,7 @@ public class Node {
 
     public void sendSEROKMsg(Message message) {
 
-        System.out.println("Received query : "+message);
+        System.out.println("Received query : " + message);
         noOfRcvMsg++;
         if (!lastMessage.isequal(message)) {
             lastMessage = message;
@@ -353,9 +373,9 @@ public class Node {
                 myMsgTransfer.sendMessage(serokMsg);
 
                 noOfAnsMsg++;
-                System.out.println("Answered query : "+message);
-            }else {
-                Message serokMsg = new SEROKMessage(files,message.hops, message.ip_from, message.port_from);
+                System.out.println("Answered query : " + message);
+            } else {
+                Message serokMsg = new SEROKMessage(files, message.hops, message.ip_from, message.port_from);
                 myMsgTransfer.sendMessage(serokMsg);
                 System.out.println("Searching file globally.");
                 forwardSerMsg(message);
@@ -376,7 +396,7 @@ public class Node {
         if (files.size() > 0) {
             System.out.println("Locally found files:");
             noOfAnsMsg++;
-            System.out.println("Answered query : "+message);
+            System.out.println("Answered query : " + message);
             Iterator<String> fileIterator = files.iterator();
             while (fileIterator.hasNext()) {
                 String temp = fileIterator.next();
@@ -384,7 +404,8 @@ public class Node {
             }
             endTime = System.currentTimeMillis();
 //            System.out.println("Time elapsed: " + (endTime - startTime));
-            performaceTable.add(qID + " " + message.hops + " " + (endTime - startTime));
+//            if (performaceTable.size() == (qID - 1))
+                performaceTable.add(qID + " " + message.hops + " " + (endTime - startTime));
 
         } else {
             System.out.println("Searching file globally.");
@@ -404,7 +425,7 @@ public class Node {
             if (!message.ip_from.matches(temp.getIpAddress()) || message.port_from != temp.getPortNumber()) {
                 Message serMsg = new SERMessage(message.query, message.hops + 1, message.ip_from, message.port_from, temp.getIpAddress(), temp.getPortNumber());
                 noOfFwdMsg++;
-                System.out.println("Forwarded query : "+message.ip_from+":"+message.port_from+" TO "+temp.getIpAddress()+":"+temp.getPortNumber());
+                System.out.println("Forwarded query : " + message.ip_from + ":" + message.port_from + " TO " + temp.getIpAddress() + ":" + temp.getPortNumber());
                 myMsgTransfer.sendMessage(serMsg);
             }
         }
